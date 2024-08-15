@@ -44,7 +44,7 @@ update_script() {
 function basic_env(){
 	# 更新软件包
 	apt update && apt upgrade -y &&
-	apt install -y curl build-essential jq git libssl-dev pkg-config screen pkg-config libmysqlclient-dev openssl
+	apt install -y curl build-essential jq git libssl-dev pkg-config screen libmysqlclient-dev openssl
 	
 	# 安装 Rust 和 Cargo
 	echo "正在安装 Rust 和 Cargo..."
@@ -336,20 +336,14 @@ function start_client(){
 	if [[ -z "$server_ip" ]]; then
 	  echo "IP地址不能为空。"
 	  exit 1
-	fi
 
-	read -p "请输入挖矿线程数: " threads
-	# 有效threads检测
-	if [[ -z "$threads" ]]; then
-	  echo "threads不能为空。"
-	  exit 1
 	fi
 
 	# 配置文件路径
 	config_file=$HOME/ore-hq-client/id.json
 
 	cd $HOME/ore-hq-client/target/release
-	screen -dmS ore-hq-client ./ore-hq-client --url ws://$server_ip:3000  --threads $threads --keypair $config_file
+	screen -dmS ore-hq-client ./ore-hq-client --url ws://$server_ip:3000  --threads 999 --keypair $config_file
 }
 
 # 部署集群客户端
@@ -359,13 +353,7 @@ function install_client(){
 	if [[ -z "$server_ip" ]]; then
 	  echo "IP地址不能为空。"
 	  exit 1
-	fi
-
-	read -p "请输入挖矿线程数: " threads
-	# 有效threads检测
-	if [[ -z "$threads" ]]; then
-	  echo "threads不能为空。"
-	  exit 1
+	
 	fi
 
 	read -p "请输入钱包秘钥: " private_key
@@ -378,7 +366,7 @@ function install_client(){
 	basic_env
 
 	cd $HOME
-	git clone https://github.com/Kriptikz/ore-hq-client
+	git clone https://github.com/A8399/ore-hq-client.git
 	cd $HOME/ore-hq-client
 
 	# 生成配置文件路径
@@ -391,7 +379,7 @@ function install_client(){
 
 	cargo build --release
 	cd $HOME/ore-hq-client/target/release
-	screen -dmS ore-hq-client ./ore-hq-client --url ws://$server_ip:3000  --threads $threads --keypair $config_file
+	screen -dmS ore-hq-client ./ore-hq-client --url ws://$server_ip:3000  --threads 999 --keypair $config_file
 
 	echo "集群客户端已启动..."
 
